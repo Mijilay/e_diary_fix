@@ -3,6 +3,8 @@ from datacenter.models import Chastisement
 from datacenter.models import Commendation
 from datacenter.models import Lesson
 import random
+import argparse
+
 
 texts=["Молодец!", "Отлично!", "Хорошо!", "Гораздо лучше, чем я ожидал!", "Ты меня приятно удивил!", "Великолепно!", "Прекрасно!", "Ты меня очень обрадовал!", "Именно этого я давно ждал от тебя!", "Сказано здорово – просто и ясно!", "Ты, как всегда, точен!", "Очень хороший ответ!", "Талантливо!", "Ты сегодня прыгнул выше головы!", "Я поражен!", "Уже существенно лучше!", "Потрясающе!", "Замечательно!", "Прекрасное начало!", "Так держать!", "Ты на верном пути!", "Здорово!", "Это как раз то, что нужно!", "Я тобой горжусь!", "С каждым разом у тебя получается всё лучше!", "Мы с тобой не зря поработали!", "Я вижу, как ты стараешься!", "Ты растешь над собой!", "Ты многое сделал, я это вижу!", "Теперь у тебя точно все получится!"]
 
@@ -22,8 +24,13 @@ def create_commendation(schoolkid, subject):
     text = random.choice(texts)
     Commendation.objects.create(teacher=lesson.teacher, subject=lesson.subject, created=lesson.date, schoolkid=schoolkid, text=text)
 
-def main(pupil_name, subject):
-    schoolkid = Schoolkid.objects.get(full_name__contains=pupil_name)
+def main():
+    parser = argparse.ArgumentParser(description='Приветствую. ')
+    parser.add_argument('--schoolkid', type=str, help='Введите имя ученика для улучшения оценок и добавления похвалы.')
+    parser.add_argument('--subject', type=str, help='Введите название предмета по которому требуется добавить похввалу')
+    args = parser.parse_args()
+    print(args.indir)
+    schoolkid = Schoolkid.objects.get(full_name__contains=args.schoolkid)
     fix_marks(schoolkid)
     del_chastisement(schoolkid)
-    create_commendation(schoolkid, subject)
+    create_commendation(schoolkid, args.subject)
