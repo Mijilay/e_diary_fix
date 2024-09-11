@@ -2,6 +2,7 @@ from datacenter.models import Schoolkid, Mark
 from datacenter.models import Chastisement
 from datacenter.models import Commendation
 from datacenter.models import Lesson
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 import random
 import argparse
 
@@ -30,7 +31,12 @@ def main():
     parser.add_argument('--schoolkid', type=str, help='Введите имя ученика для улучшения оценок и добавления похвалы.')
     parser.add_argument('--subject', type=str, help='Введите название предмета по которому требуется добавить похввалу')
     args = parser.parse_args()
-    schoolkid = Schoolkid.objects.get(full_name__contains=args.schoolkid)
+    try: 
+        schoolkid = Schoolkid.objects.get(full_name__contains=args.schoolkid)
+    except ObjectDoesNotExist:
+        print("Такого ученика нет в базе!")
+    except MultipleObjectsReturned:
+        print("Найдено несколько учеников, уточните запрос!")
     fix_marks(schoolkid)
     del_chastisement(schoolkid)
     create_commendation(schoolkid, args.subject)
