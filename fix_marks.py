@@ -58,6 +58,7 @@ def get_schoolkid(schoolkid):
     except Schoolkid.MultipleObjectsReturned:
         raise Schoolkid.MultipleObjectsReturned("Найдено несколько учеников с таким именем, уточните запрос")
 
+
 def main():
     parser = argparse.ArgumentParser(description='Приветствую. ')
     parser.add_argument('--schoolkid', type=str, help='Введите имя ученика для улучшения оценок и добавления похвалы.')
