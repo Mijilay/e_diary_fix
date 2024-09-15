@@ -1,10 +1,6 @@
-from datacenter.models import Schoolkid, Mark
-from datacenter.models import Chastisement
-from datacenter.models import Commendation
-from datacenter.models import Lesson
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-import random
 import argparse
+import random
+from datacenter.models import Chastisement, Commendation, Lesson, Mark, Schoolkid 
 
 
 praises=["Молодец!",
@@ -53,17 +49,22 @@ def create_commendation(schoolkid, subject):
     Commendation.objects.create(teacher=lesson.teacher, subject=lesson.subject, created=lesson.date, schoolkid=schoolkid, text=praise)
 
 
+def get_schoolkid(schoolkid):
+    try: 
+        schoolkid = Schoolkid.objects.get(full_name__contains=schoolkid)
+        return schoolkid
+    except Schoolkid.ObjectDoesNotExist:
+        return "Такого ученика нет в базе!"
+    except Schoolkid.MultipleObjectsReturned:
+        return "Найдено несколько учеников, уточните запрос!"
+
+
 def main():
     parser = argparse.ArgumentParser(description='Приветствую. ')
     parser.add_argument('--schoolkid', type=str, help='Введите имя ученика для улучшения оценок и добавления похвалы.')
     parser.add_argument('--subject', type=str, help='Введите название предмета по которому требуется добавить похввалу')
     args = parser.parse_args()
-    try: 
-        schoolkid = Schoolkid.objects.get(full_name__contains=args.schoolkid)
-    except ObjectDoesNotExist:
-        print("Такого ученика нет в базе!")
-    except MultipleObjectsReturned:
-        print("Найдено несколько учеников, уточните запрос!")
+    schoolkid = get_schoolkid(args.schoolkid)
     fix_marks(schoolkid)
     del_chastisement(schoolkid)
     create_commendation(schoolkid, args.subject)
