@@ -54,10 +54,9 @@ def get_schoolkid(schoolkid):
         schoolkid = Schoolkid.objects.get(full_name__contains=schoolkid)
         return schoolkid
     except Schoolkid.ObjectDoesNotExist:
-        return "Такого ученика нет в базе!"
+        raise Schoolkid.ObjectDoesNotExist("Ученик с таким именем не найден")
     except Schoolkid.MultipleObjectsReturned:
-        return "Найдено несколько учеников, уточните запрос!"
-
+        raise Schoolkid.MultipleObjectsReturned("Найдено несколько учеников с таким именем, уточните запрос")
 
 def main():
     parser = argparse.ArgumentParser(description='Приветствую. ')
